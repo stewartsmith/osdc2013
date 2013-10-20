@@ -1,0 +1,365 @@
+#!/usr/bin/env pinpoint
+
+[black]
+[font=Sans 70px]
+[text-align=center]
+[duration=30.000000]
+-- [duration=4.448699]
+The Agony and Ecstasy of CI: a war story
+
+
+Stewart Smith
+Percona
+# Hi!
+# I work for
+-- [white] [percona-logo.jpg]
+
+# which is a MySQL support, consulting and development company
+--
+Joined May 2011
+--
+Director of Software Architecture
+# Lovely title, have been involved in major overhaul of development
+# Currently working on doing everything correctly in packaging,
+# linux distribution inclusion and (again) improving dev practices.
+--
+A war story
+# Witty titles get more attendees
+# not as much of a battle as would think
+# helps if org is open to positive changes
+--
+Technical Debt
+# lack of test suite
+# lack of passing test suite
+# casual code review
+# moving to more "formal" of these
+# is net gain, not loss.
+--
+Introducing CI
+# this talk is partly about
+--
+CI = Continuous Integration
+# just in case unclear
+--
+Changing development practices
+# but also very much about
+# *ALWAYS* be looking for ways to improve
+# State of the art in 1997 is not state of the art now.
+--
+Existing company
+# not starting from scratch
+# Can be easier starting from scratch
+# Seldom if ever the case.
+# People always have expectations even if new proj
+--
+Existing development team
+# releases still have to be made
+# some people stuck in ways
+--
+Existing products
+# with customers
+# who expect fixes
+# no shutdown for months while figure things out
+--
+Privately funded company
+# This is from exp at Percona.
+# No Venture Capital to blow
+# Small company achieving big.
+# no VC or large company budget to be inefficient
+# work *much* smarter, not harder.
+# some of our competitors have, in comparison, infinite budgets.
+--
+Zero Dev Infrastructure people
+# nobody dedicated to this.
+# This is a challenge
+# Has changed, but initially tough.
+# There are strategies.
+--
+Probably a common scenario
+# so hopefully my advice can help
+# My new responsibility
+# Greatly modified from where it was, helping the company grow.
+# Quick overview of what we build
+--
+All FOSS
+--
+Percona Server
+# "branch" of MySQL
+# we base on the Oracle release, add our own patchset
+# performance, usability and managability improvements
+# Deadline to deliver new point release 30 days after Oracle.
+# Shipping is a feature.
+# People bet their company on this product.
+--
+Percona XtraBackup
+# online backup for InnoDB
+# compiles/links in lots of InnoDB code (subset of MySQL)
+# full and incremental
+# people want their backups to work
+# (and others)
+# but these are our major ones
+--
+Why CI?
+--
+It has served me well
+# quest to build better software
+--
+MySQL AB
+# 1st CI exp
+# pushbuild
+# built after push (only), many trees
+# helped dig MySQL out of giant hole
+# 5.0 could have been worse
+--
+Build trunk
+# is phase 1 of introducing any CI
+# just constantly build and test trunk
+# let people see how broken their shit is
+# often enlightening if support > 1 platform
+--
+Run test suite
+# it is probably broken
+# concurrent runs on same hardware?
+# sporadic failures?
+# hard to run?
+# let people see how broken their shit is
+# The most humbling experience is to have
+# somebody else try your perfect code.
+--
+Fix things
+# Helps if you can make people do it.
+# It's a fight. Long term vs short term.
+# Win. Be an asshole about it.
+# Never chastise QA or Dev for test failures.
+# Always look to improve and introduce fewer regressions.
+--
+Team trees
+# to scale with people.
+# NOBODY EVER RAN TRUNK.
+# not something I recommend
+# MySQL would merge team work together
+# then team into trunk
+# build+test these solved more problems
+-- [white] [1000px-Drizzle-logotype.svg.png]
+# Discovered a great tool
+--
+Hudson
+# why re-invent the wheel?
+# which due to Oracle being ass, is now
+-- [white] [1000px-Jenkins_logo_with_title.svg.png]
+# The only reason for Java to exist.
+-- [percona_jenkins.jpg]
+# looks something like this
+--
+Free Software
+# other solutions are often not
+-- [jenkins_config.png]
+Flexible Web UI
+# Buildbot = text config
+# Mostly text file config
+# great if you're a hacker
+# not if you want docs & QA & mgmt easy use
+# Web config is a *plus*
+# Easy to get going
+# no special syntax
+--
+Easy to install
+# war file
+# apt-get install
+-- [jenkins_plugins.png]
+Plugins
+# BZR
+# SSH Slave
+# cloud slaves (on demand!)
+-- [jenkins_slaves.png]
+Slaves
+# build slaves
+# many platforms
+# anything that can run Java
+# We have ~32
+--
+Multi-platform software
+# Jenkins supports multi level matrix builds.
+-- [jenkins_xb20.png]
+# our XB build matrix
+# 12 Supported Platforms
+# 12 * 11 = 132
+# 12 platforms
+# 7 Innodb release variants (5.1,5.5)
+# 4 Innodb debug variants
+#
+# Nobody had seen this before. It was a shock.
+--
+DDoS
+# Building XtraBackup is akin to a DDoS attack on build infrastructure
+# You'd be surprised at how big your test matrix is.
+# "Didn't we test this before release?"
+# Add it up for people, automate it.
+--
+Slaves in Cloud
+# Dynamically scale out!
+# We *HAD* EC2
+# this didn't work too well for us
+# expensive.
+# spin up, min 2hrs, infrequent builds, many platforms = costly
+# can be a good idea.
+--
+Private Cloud?
+# MySQL 15 minute install rule.
+# Too much fucking around.
+# We live in hope.
+--
+Static VMs with Puppet
+# this is what we use now
+# KVM as VirtualBox is shit
+# virt-manager over SSH
+# Jenkins connects via SSH
+# puppet deploys authorized_hosts file
+# installs correct software.
+# even devs ssh keys
+--
+Process changes
+# to help ensure quality
+# showing people their code sucks is one thing
+--
+Code Review
+# Hopefully you do this.
+# If not, introduce it.
+# At very least, you know what's going in.
+# Make junior devs do it too. Learning exp.
+# only senior can ack.
+--
+If we didn't make mistakes
+compilers wouldn't give errors,
+or warnings.
+--
+1 Stupid mistake per person per year.
+--
+1 not-so-stupid mistake per person per year
+--
+1 interesting mistake per person per year
+--
+1 regression per person per year.
+--
+1-2 days to fix each one
+# naturally you check these in at the end of a workday
+# notice halfway through the next one, check in "fix"
+# before leaving.
+--
+Team of 12,
+your tree is CONSTANTLY broken.
+--
+and nobody will run trunk
+because it's broken
+# or develop against it.
+# or beleive a test failure is their fault.
+--
+Make breaking trunk <b>HARD</b>
+--
+Always releaseable trunk
+# mad rush to release is no more
+# you can release at any time
+# and be confident.
+--
+param build
+# build *before* requesting review
+# prove that tests pass with trunk+your work
+# Text box for bzr URL
+# build+test before merge request
+# can send any parameter to build
+-- [jenkins_param.png]
+# for PS 5.5
+# branch, test run options (e.g. --valgrind), inject build options
+-- [mergereq.png]
+# and paste in URL to merge request
+# or whatever you use for code review.
+# OpenStack guys automatically fire off stuff
+# this is great, if you have all that tech
+# Idea is: bad code doesn't get approved
+# Easy code review: don't accept if build fails :)
+--
+Staging builds
+# integrate, test, then push to trunk
+# ensures trunk always passes.
+# final review
+# we did this manually
+# merge captain param build, then push.
+# idea: bad code doesn't ever hit trunk.
+--
+Gated trunk
+# Idea is nobody ever pushes directly
+# You can actually link benchmark+test runs to merges
+# automated audit trail
+# So you can learn from any mistakes.
+--
+Automated Staging
+# pretty easy to set up.
+# We have launchpad account
+# all pushes to trunk are by a bot.
+# idea: less work for merge captain.
+# Had for Drizzle, I took too long
+# don't delay: it's easy.
+--
+Build Triggers
+# BZR polling
+# after another job done
+# chain jobs together
+# time based
+# we bypass full build+test for docs only branches
+--
+Auto-deploy documentation
+# after push to trunk
+# build docs
+# push to web server
+--
+Automate all the things
+# extended QA
+# daily builds
+# releases
+# doing pushbutton to release is awesome
+# custom builds at push of button=awesome
+--
+Graph all the things
+# Arbitrary plots
+# XML result from benchmark
+# nightly performance regression tests
+# staging performance regression tests
+--
+Manual checklists
+# our release process includes manual steps
+# inform marketing
+# ensure docs up to date
+# inform support/consulting
+# simple checklist. Many times/year to screw up
+# google spreadsheets are powerful.
+--
+Has all this helped?
+# XB releases: 2010=2, 2011=4, 2012=11, 2013=12
+# PS releases: sooner, fewer bugs.
+# Sense of improvement
+# More developers
+--
+2586 Jobs
+# including matrix jobs
+--
+36,049 builds
+# we expire most builds
+--
+3.7GB java process
+# which is easy
+--
+Jenkins does scale
+# at least until you start hiring dev automation people
+-- [ps55delay.png]
+# has helped, at same time improving quality
+-- [ps51delay.png]
+# much more visible with 5.1 version (longer history)
+-- [xbtests.png]
+# from zero to hero.
+# people file bugs now.
+--
+Yes, it helps.
+WHERE COUNT(devs) > 0
+
+-- [black] [font=Sans 100px] [transition=spin-text]
+FIN
